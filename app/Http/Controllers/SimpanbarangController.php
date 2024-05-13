@@ -35,17 +35,22 @@ class SimpanbarangController extends Controller
      */
     public function store(Request $request)
     {
-        // DB::beginTransaction();
         try {
-            $totalIdBarang = $request->id_barang;
-            $idBarang = [];
-            // for($i = 1; $i <= $totalIdBarang; $i++){
-            //     $idBarang = $i;
-            // }   
-            dd($idBarang);
+            foreach ($request->id_barang as $key => $value) {
+                $data = [
+                    'id_transaksi' => $request->id_transaksi,
+                    'id_barang' => $value,
+                    'id_satuan' => $request->id_satuan[$key],
+                    'jumlah' => $request->jumlah[$key],
+                ];
+                Tbl_pembelian::create($data);
+            }
 
-         } catch (\Exception $e) {
-            // DB::rollBack();
+            return response()->json([
+                'succes' => true,
+                'message' => 'Data berhasil disimpan'
+            ]);
+        } catch (\Exception $e) {
             return response()->json([
                 'succes' => false,
                 'message' => $e->getMessage()
